@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Booking Confirmed{% endblock %}
+
+{% block content %}
+<div class="booking-page">
+    <h1>Booking Confirmed</h1>
+    <p>Thank you, {{ booking.client.first_name }}. Here are your session details:</p>
+
+    <div class="confirmation-details">
+        <p><strong>Game:</strong> {{ booking.game.get_name_display }}</p>
+        <p><strong>Date:</strong> {{ booking.session_date }}</p>
+        <p><strong>Time:</strong> {{ booking.session_start_time }}</p>
+        <p><strong>Duration:</strong> {{ booking.actual_duration_hours }} hours</p>
+        <p><strong>Address:</strong> {{ booking.address }}, Owerri, Imo State, Nigeria</p>
+        <p><strong>Discount:</strong> {{ booking.discount_percent }}%</p>
+        <p><strong>Surcharge:</strong> {{ booking.surcharge_percent }}%</p>
+        <p><strong>Total Price:</strong> NGN {{ booking.final_price }}</p>
+        <p><strong>Payment Status:</strong>
+        <span class="status-badge status-{{ booking.payment_status|lower }}">
+            {{ booking.get_payment_status_display }}
+        </span>
+        </p>
+        {% if booking.payment_status == 'PENDING' %}
+        <p>
+            <a href="{% url 'initialize_payment' booking.id %}" class="btn-full">Retry Payment</a>
+        </p>
+    {% endif %}
+
+    {% if booking.payment_status == 'PAID' %}
+    <div class="post-payment-contact" id="postPaymentContact"
+        data-client-name="{{ booking.client.first_name }}"
+        data-game="{{ booking.game.get_name_display }}"
+        data-date="{{ booking.session_date }}"
+        data-time="{{ booking.session_start_time }}">
+        <button type="button" id="contactToggleBtn" class="contact-toggle-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.07-1.33A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-2.68.7.72-2.62-.2-.32A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/></svg>
+            Need to reach your coach?
+        </button>
+
+        <div id="contactPanel" class="contact-panel">
+            <p class="contact-panel-label">Send a quick message, then continue on WhatsApp or email:</p>
+            <input type="text" id="contactMessageInput" class="contact-input" placeholder="e.g. Can we reschedule my session?" maxlength="300">
+            <div class="contact-panel-actions">
+                <button type="button" id="whatsappBtn" class="btn-whatsapp">Continue on WhatsApp</button>
+                <a href="#" id="emailBtn" class="btn-email">Or email instead</a>
+            </div>
+            <p class="contact-fallback">
+                Can't reach us there? Call or WhatsApp directly: <a href="tel:+2349034055540">+234 903 405 5540</a>
+            </p>
+        </div>
+    </div>
+    {% endif %}
+    </div>
+
+    <p>Once payment is completed, we'll reach out via WhatsApp to confirm any final details or rescheduling needs.</p>
+
+    <a href="{% url 'landing' %}" class="btn-full">Back to Home</a>
+</div>
+<script src="{% static 'js/contact-widget.js' %}"></script>
+{% endblock %}

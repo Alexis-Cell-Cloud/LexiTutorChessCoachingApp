@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block content %}
+<div class="booking-page">
+    <h1>My Bookings</h1>
+
+    {% if bookings %}
+        <div class="my-bookings-list">
+            {% for booking in bookings %}
+                <a href="{% url 'booking_confirmation' booking.id %}" class="booking-card">
+                    <div class="booking-card-main">
+                        <strong>{{ booking.game.get_name_display }}</strong>
+                        <span>{{ booking.session_date }} — {{ booking.session_start_time }}</span>
+                    </div>
+                    <span class="status-badge status-{{ booking.payment_status|lower }}">
+                        {{ booking.get_payment_status_display }}
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You haven't made any bookings yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

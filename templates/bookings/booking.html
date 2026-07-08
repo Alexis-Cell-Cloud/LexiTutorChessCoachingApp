@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Book a Session{% endblock %}
+
+{% block content %}
+<div class="booking-page">
+    <h1>Book a Coaching Session</h1>
+    <p>Location: Owerri, Imo State, Nigeria</p>
+
+    <form method="post" id="booking-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.game.id_for_label }}">Game</label>
+            {{ form.game }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.address.id_for_label }}">Address</label>
+            {{ form.address }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.session_date.id_for_label }}">Session Date</label>
+            {{ form.session_date }}
+        </div>
+
+        <div class="form-group" id="time-slot-section">
+            <label>Session Time</label>
+            <p id="slot-hint">Select a date first to see available times.</p>
+            <div id="slot-grid"></div>
+            <p id="online-warning" style="display:none;">Note: sessions outside 8AM–8PM are likely online-based.</p>
+            <div style="display:none;">
+                {{ form.session_start_time }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.actual_duration_hours.id_for_label }}">Duration (hours)</label>
+            {{ form.actual_duration_hours }}
+        </div>
+
+        {% if form.errors %}
+            <div class="form-errors">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ field.label }}: {{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <button type="submit" class="btn-full">Confirm Booking</button>
+    </form>
+</div>
+{% load static %}
+
+<script>
+    const bookingConfig = {
+        dateFieldId: '{{ form.session_date.id_for_label }}',
+        timeFieldId: '{{ form.session_start_time.id_for_label }}'
+    };
+</script>
+<script src="{% static 'js/booking.js' %}"></script>
+
+{% endblock %}
